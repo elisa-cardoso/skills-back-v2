@@ -156,7 +156,8 @@ public class SkillAssessmentController {
                 userSkill.getLevel(),
                 userSkill.getScore(),
                 userSkill.getSkill().getImage(),
-                userSkill.getSkill().getDescription()
+                userSkill.getSkill().getDescription(),
+                userSkill.getFavorite()
 
         );
 

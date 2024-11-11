@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,7 +51,8 @@ public class UserSkillService {
                 savedUserSkill.getLevel(),
                 savedUserSkill.getScore(),
                 skill.getImage(),
-                skill.getDescription()
+                skill.getDescription(),
+                userSkill.getFavorite()
         );
     }
 
@@ -72,7 +74,8 @@ public class UserSkillService {
                     userSkill.getLevel(),
                     userSkill.getScore(),
                     skill.getImage(),
-                    skill.getDescription()
+                    skill.getDescription(),
+                    userSkill.getFavorite()
             );
         }).collect(Collectors.toList());
     }
@@ -109,11 +112,84 @@ public class UserSkillService {
         );
     }
 
-
-
     public void deleteUserSkill(Long id) {
         UserSkill userSkill = userSkillRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("UserSkill not found"));
         userSkillRepository.delete(userSkill);
     }
+
+    public List<UserSkill> getFavorites() {
+
+        // Obter o usuário autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName(); // Obtém o login do usuário autenticado
+
+        // Encontrar o usuário no banco de dados usando o login
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        // Buscar habilidades favoritas do usuário
+        return userSkillRepository.findByUserAndFavoriteTrue(user);
+    }
+
+    public String addFavorite(Long skillId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName(); // Obtém o login do usuário autenticado
+
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        Skill skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new ResourceNotFoundException("Habilidade não encontrada"));
+
+        Optional<UserSkill> userSkillOptional = userSkillRepository.findByUserAndSkill(user, skill);
+        if (userSkillOptional.isPresent()) {
+            UserSkill userSkill = userSkillOptional.get();
+
+            if (userSkill.getFavorite() != null && userSkill.getFavorite()) {
+                return "A habilidade já está nos favoritos";
+            }
+
+            userSkill.setFavorite(true);
+            userSkillRepository.save(userSkill);
+            return "Habilidade favoritada com sucesso!";
+        } else {
+            return "Habilidade não encontrada para o usuário.";
+        }
+    }
+
+    public String removeFavorite(Long skillId) {
+
+        // Obter o usuário autenticado
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName(); // Obtém o login do usuário autenticado
+
+        // Encontrar o usuário no banco de dados usando o login
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        // Verifica se a habilidade existe
+        Skill skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new ResourceNotFoundException("Habilidade não encontrada"));
+
+        // Verifica se a habilidade está associada ao usuário
+        Optional<UserSkill> userSkillOptional = userSkillRepository.findByUserAndSkill(user, skill);
+        if (userSkillOptional.isPresent()) {
+            UserSkill userSkill = userSkillOptional.get();
+
+            // Se a habilidade não está favoritada
+            if (userSkill.getFavorite() == null || !userSkill.getFavorite()) {
+                return "A habilidade não está nos favoritos";
+            }
+
+            // Remove da lista de favoritos
+            userSkill.setFavorite(false);
+            userSkillRepository.save(userSkill);
+            return "Habilidade removida dos favoritos com sucesso!";
+        }
+
+        return "Habilidade não encontrada para o usuário.";
+    }
+
+
 }

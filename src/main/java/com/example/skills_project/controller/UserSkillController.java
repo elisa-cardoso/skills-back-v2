@@ -26,7 +26,7 @@ public class UserSkillController {
     private UserSkillService userSkillService;
 
     @Autowired
-    private SkillAssessmentService skillAssessmentService;
+    private UserSkillRepository userSkillRepository;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserSkillResponseDTO> associateSkillToUser(@RequestBody UserSkillRequestDTO requestDTO) {
@@ -58,5 +58,35 @@ public class UserSkillController {
     public ResponseEntity<Void> deleteUserSkill(@PathVariable Long id) {
         userSkillService.deleteUserSkill(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/favorite/{skillId}")
+    public ResponseEntity<String> addFavorite(@PathVariable Long skillId) {
+        String response = userSkillService.addFavorite(skillId);
+        return ResponseEntity.ok(response);
+    }
+
+    // Endpoint para remover uma habilidade dos favoritos
+    @DeleteMapping("/favorite/{skillId}")
+    public ResponseEntity<String> removeFavorite(@PathVariable Long skillId) {
+        String response = userSkillService.removeFavorite(skillId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("toggle/{id}")
+    public ResponseEntity<UserSkill> toggleFavorite(@PathVariable("id") Long userSkillId) {
+        Optional<UserSkill> userSkillOpt = userSkillRepository.findById(userSkillId);
+        if (userSkillOpt.isPresent()) {
+            UserSkill userSkill = userSkillOpt.get();
+            userSkill.setFavorite(!userSkill.getFavorite());
+            userSkillRepository.save(userSkill);
+            return ResponseEntity.ok(userSkill);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<?> getFavorites() {
+        return ResponseEntity.ok(userSkillService.getFavorites());
     }
 }

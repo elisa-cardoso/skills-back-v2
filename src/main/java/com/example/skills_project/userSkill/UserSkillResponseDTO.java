@@ -15,8 +15,9 @@ public class UserSkillResponseDTO {
     private Integer score;
     private String image;
     private String description;
+    private Boolean favorite;
 
-    public UserSkillResponseDTO(Long id, Long skillId, String userLogin, String skillName, Integer level, Integer score, String image, String description) {
+    public UserSkillResponseDTO(Long id, Long skillId, String userLogin, String skillName, Integer level, Integer score, String image, String description, Boolean favorite) {
         this.id = id;
         this.skillId = skillId;
         this.userLogin = userLogin;
@@ -25,6 +26,7 @@ public class UserSkillResponseDTO {
         this.score = score;
         this.image = image;
         this.description = description;
+        this.favorite = favorite;
     }
 }
 

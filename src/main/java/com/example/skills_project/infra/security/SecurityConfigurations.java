@@ -40,6 +40,9 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.PUT, "/skill/{id}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/skill").permitAll()
                         .requestMatchers(HttpMethod.POST, "/skill/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user_skills/favorite").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user_skills/favorite/{skillId}").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/user_skills/favorite/{skillId}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user_skills").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/questions/user_skill/{skillId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user_skills").hasRole("ADMIN")
@@ -51,6 +54,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/questions/skill/{skillId}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/skills/by-category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/skills/search").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/user_skills/toggle/{id}").permitAll()
 
 
                         .requestMatchers(
@@ -74,7 +78,7 @@ public class SecurityConfigurations {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

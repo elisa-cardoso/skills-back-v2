@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface UserSkillRepository extends JpaRepository<UserSkill, Long> {
     Optional<UserSkill> findByUserAndSkill (User user, Skill skill);
     List<UserSkill> findByUser(User user);
+    List<UserSkill> findByUserAndFavoriteTrue(User user);
 }

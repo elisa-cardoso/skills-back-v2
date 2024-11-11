@@ -78,13 +78,13 @@ public class SkillAssessmentService {
     }
 
     public Integer calculateLevel(Integer score) {
-        if (score <= 2) {
+        if (score <= 1) {
             return 1; // Nível 1
-        } else if (score <= 4) {
+        } else if (score <= 2) {
             return 2; // Nível 2
-        } else if (score <= 6) {
+        } else if (score <= 3) {
             return 3; // Nível 3
-        } else if (score <= 8) {
+        } else if (score <= 4) {
             return 4; // Nível 4
         }else {
             return 5; // Nível 5
