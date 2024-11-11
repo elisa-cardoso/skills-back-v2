@@ -35,6 +35,8 @@ public class SkillAssessmentService {
         return questions.get(new Random().nextInt(questions.size()));
     }
 
+
+
     public Question createQuestion(Question question) {
         return questionRepository.save(question);
     }
@@ -56,7 +58,7 @@ public class SkillAssessmentService {
         Skill skill = question.getSkill();
 
         UserSkill userSkill = userSkillRepository.findByUserAndSkill(user, skill)
-                .orElse(new UserSkill(user, skill, 0, 1));
+                .orElse(new UserSkill(user, skill, 0, 0));
 
         boolean isCorrect = answer.equalsIgnoreCase(question.getCorrectOption());
 
@@ -78,12 +80,14 @@ public class SkillAssessmentService {
     public Integer calculateLevel(Integer score) {
         if (score <= 2) {
             return 1; // Nível 1
-        } else if (score <= 5) {
+        } else if (score <= 4) {
             return 2; // Nível 2
-        } else if (score <= 10) {
+        } else if (score <= 6) {
             return 3; // Nível 3
-        } else {
-            return 4; // Nível 4 ou mais
+        } else if (score <= 8) {
+            return 4; // Nível 4
+        }else {
+            return 5; // Nível 5
         }
     }
 
@@ -94,24 +98,6 @@ public class SkillAssessmentService {
 
         return userSkillOpt.orElse(null);
     }
-
-    public Question saveQuestion(Question question) {
-        if ("A".equalsIgnoreCase(question.getCorrectOption())) {
-            question.setIsAnswerCorrect(true);
-        } else if ("B".equalsIgnoreCase(question.getCorrectOption())) {
-            question.setIsAnswerCorrect(true);
-        } else if ("C".equalsIgnoreCase(question.getCorrectOption())) {
-            question.setIsAnswerCorrect(true);
-        } else if ("D".equalsIgnoreCase(question.getCorrectOption())) {
-            question.setIsAnswerCorrect(true);
-        } else {
-            question.setIsAnswerCorrect(false);
-        }
-
-        // Salva a questão no banco de dados
-        return questionRepository.save(question);
-    }
-
 
     public List<Question> getAllQuestions() {
         return questionRepository.findAll();
@@ -129,4 +115,8 @@ public class SkillAssessmentService {
     public List<Question> getQuestionsBySkillId(Long skillId) {
         return questionRepository.findBySkillId(skillId);
     }
+
+
 }
+
+

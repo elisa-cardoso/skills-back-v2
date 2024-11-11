@@ -1,5 +1,7 @@
 package com.example.skills_project.skill;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,8 +11,25 @@ import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
     Optional<Skill> findById(Long id);
-    @Query("SELECT s FROM skills s WHERE LOWER(REPLACE(s.title, ' ', '')) LIKE LOWER(REPLACE(CONCAT('%', :title, '%'), ' ', ''))")
-    List<Skill> searchByTitle(@Param("title") String title);
+    @Query("SELECT s FROM skills s JOIN s.category c WHERE (c.id = :categoryId OR :categoryId IS NULL) AND (s.title LIKE %:title% OR :title IS NULL)")
+    Page<Skill> findByCategoryAndTitle(
+            @Param("categoryId") Long categoryId,
+            @Param("title") String title,
+            Pageable pageable
+    );
 
-    List<Skill> findByCategory_Id(Long categoryId);
+    @Query("SELECT s FROM skills s WHERE LOWER(TRIM(s.title)) LIKE LOWER(CONCAT('%', TRIM(:title), '%'))")
+    Page<Skill> findByTitle(
+            @Param("title") String title,
+            Pageable pageable
+    );
+
+    @Query("SELECT s FROM skills s")
+    Page<Skill> findAllSkills(Pageable pageable);
+
+    @Query("SELECT s FROM skills s JOIN s.category c WHERE c.id = :categoryId")
+    Page<Skill> findByCategory_Id(
+            @Param("categoryId") Long categoryId,
+            Pageable pageable
+    );
 }

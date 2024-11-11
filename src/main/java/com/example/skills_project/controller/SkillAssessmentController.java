@@ -14,10 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -54,9 +51,8 @@ public class SkillAssessmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        // Mapear a lista de entidades para DTOs de resposta
         List<QuestionResponseDTO> response = questions.stream()
-                .map(QuestionResponseDTO::new) // Converte a entidade para DTO de resposta
+                .map(QuestionResponseDTO::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(response);
@@ -68,11 +64,10 @@ public class SkillAssessmentController {
             @RequestBody QuestionDTO questionDTO) {
 
         Skill skill = new Skill();
-        skill.setId(skillId); // Atribua o ID da habilidade
+        skill.setId(skillId);
 
-        // Converte o DTO em uma entidade Question
         Question question = new Question();
-        question.setSkill(skill); // Define a habilidade
+        question.setSkill(skill);
         question.setQuestionText(questionDTO.getQuestionText());
         question.setOptionA(questionDTO.getOptionA());
         question.setOptionB(questionDTO.getOptionB());
@@ -89,7 +84,6 @@ public class SkillAssessmentController {
             @PathVariable Long questionId,
             @RequestBody QuestionDTO questionDTO) {
 
-        // Recupera a questão existente
         Question existingQuestion = skillAssessmentService.getQuestionById(questionId);
 
         existingQuestion.setQuestionText(questionDTO.getQuestionText());
@@ -115,7 +109,7 @@ public class SkillAssessmentController {
             @RequestBody AnswerRequest answerRequest) {
 
         String answer = answerRequest.getAnswer();
-        System.out.println("Resposta recebida do frontend: " + answer);
+        // System.out.println("Resposta recebida do frontend: " + answer);
 
         boolean isCorrect = skillAssessmentService.checkAnswerAndAssignLevel(questionId, answer);
 
@@ -129,8 +123,8 @@ public class SkillAssessmentController {
         }
 
         Question question = questionOpt.get();
-        System.out.println("Resposta correta da questão: " + question.getCorrectOption());
-        System.out.println("Comparando resposta: " + answer + " com " + question.getCorrectOption());
+        // System.out.println("Resposta correta da questão: " + question.getCorrectOption());
+        // System.out.println("Comparando resposta: " + answer + " com " + question.getCorrectOption());
 
         Skill skill = question.getSkill();
 
@@ -169,5 +163,9 @@ public class SkillAssessmentController {
         return ResponseEntity.ok(response);
     }
 
-
-}
+    @GetMapping("/list/{questionId}")
+    public ResponseEntity<Question> getQuestionById(@PathVariable Long questionId) {
+            Question question = skillAssessmentService.getQuestionById(questionId);
+            return ResponseEntity.ok(question);
+        }
+    }

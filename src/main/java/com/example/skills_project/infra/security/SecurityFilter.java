@@ -28,7 +28,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Ignora a autenticação para os endpoints do Swagger
         if (path.startsWith("/swagger-ui") ||
                 path.startsWith("/v2/api-docs") ||
                 path.startsWith("/v3/api-docs") ||

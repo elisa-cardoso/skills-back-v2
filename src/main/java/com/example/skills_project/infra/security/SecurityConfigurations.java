@@ -45,6 +45,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/user_skills").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/questions/{skillId}/question").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/questions/question/{questionId}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/questions/list/{questionId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/questions/{skillId}/question").permitAll()
                         .requestMatchers(HttpMethod.POST, "/questions/{skillId}/validate").permitAll()
                         .requestMatchers(HttpMethod.GET, "/questions/skill/{skillId}").hasRole("ADMIN")

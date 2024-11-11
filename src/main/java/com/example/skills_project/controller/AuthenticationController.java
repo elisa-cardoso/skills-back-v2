@@ -26,7 +26,7 @@ public class AuthenticationController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        User user = (User) auth.getPrincipal(); // Certifique-se de que User é o tipo correto que você está usando
+        User user = (User) auth.getPrincipal();
         var token = tokenService.generateToken(user);
 
         return ResponseEntity.ok(new LoginResponseDTO(token, user.getLogin()));
