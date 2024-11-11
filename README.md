@@ -11,8 +11,16 @@ Este projeto é uma aplicação backend desenvolvida com Spring Boot, que oferec
 **Gerenciamento de Skills**
 - [x] Recebe o ID do usuário e retorna suas skills com o nível.
 - [x] Associa uma skill ao usuário com um nível.
-- [x] Atualiza o nível de uma skill associada ao usuário.
+- [x] Atualiza o nível de uma skill associada ao usuário aos responder um questionário.
 - [x] Remove a skill associada ao usuário.
+- [x] Permite o usuário favorita uma skill.
+
+**Utilidades**
+- [x] Busca por título da skill.
+- [x] Páginação.
+- [x] Filtro por categoria.
+- [x] CRUD para o gerenciamento das categorias.
+- [x] CRUD para o gerenciamento das questões.
 
 **Segurança**
 - [x] Apenas o serviço de login é público.

@@ -66,7 +66,6 @@ public class UserSkillController {
         return ResponseEntity.ok(response);
     }
 
-    // Endpoint para remover uma habilidade dos favoritos
     @DeleteMapping("/favorite/{skillId}")
     public ResponseEntity<String> removeFavorite(@PathVariable Long skillId) {
         String response = userSkillService.removeFavorite(skillId);

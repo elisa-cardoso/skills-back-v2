@@ -120,15 +120,12 @@ public class UserSkillService {
 
     public List<UserSkill> getFavorites() {
 
-        // Obter o usuário autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName(); // Obtém o login do usuário autenticado
+        String login = authentication.getName();
 
-        // Encontrar o usuário no banco de dados usando o login
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        // Buscar habilidades favoritas do usuário
         return userSkillRepository.findByUserAndFavoriteTrue(user);
     }
 
@@ -160,29 +157,23 @@ public class UserSkillService {
 
     public String removeFavorite(Long skillId) {
 
-        // Obter o usuário autenticado
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName(); // Obtém o login do usuário autenticado
 
-        // Encontrar o usuário no banco de dados usando o login
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        // Verifica se a habilidade existe
         Skill skill = skillRepository.findById(skillId)
                 .orElseThrow(() -> new ResourceNotFoundException("Habilidade não encontrada"));
 
-        // Verifica se a habilidade está associada ao usuário
         Optional<UserSkill> userSkillOptional = userSkillRepository.findByUserAndSkill(user, skill);
         if (userSkillOptional.isPresent()) {
             UserSkill userSkill = userSkillOptional.get();
 
-            // Se a habilidade não está favoritada
             if (userSkill.getFavorite() == null || !userSkill.getFavorite()) {
                 return "A habilidade não está nos favoritos";
             }
 
-            // Remove da lista de favoritos
             userSkill.setFavorite(false);
             userSkillRepository.save(userSkill);
             return "Habilidade removida dos favoritos com sucesso!";
