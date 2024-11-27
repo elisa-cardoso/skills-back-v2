@@ -1,6 +1,9 @@
 package com.example.skills_project.services;
 
+import com.example.skills_project.exception.QuestionNotFoundException;
 import com.example.skills_project.exception.ResourceNotFoundException;
+import com.example.skills_project.exception.SkillNotFoundException;
+import com.example.skills_project.exception.UserSkillNotFoundException;
 import com.example.skills_project.question.Question;
 import com.example.skills_project.question.QuestionRepository;
 import com.example.skills_project.skill.Skill;
@@ -24,18 +27,17 @@ public class SkillAssessmentService {
 
     @Autowired
     private UserSkillRepository userSkillRepository;
+
     @Autowired
     private SkillRepository skillRepository;
 
     public Question getRandomQuestionForSkill(Long skillId) {
         List<Question> questions = questionRepository.findBySkillId(skillId);
         if (questions.isEmpty()) {
-            throw new RuntimeException("Nenhuma questão disponível para essa skill.");
+            throw new SkillNotFoundException("Nenhuma questão disponível para essa skill.");
         }
         return questions.get(new Random().nextInt(questions.size()));
     }
-
-
 
     public Question createQuestion(Question question) {
         return questionRepository.save(question);
@@ -51,10 +53,10 @@ public class SkillAssessmentService {
 
         Optional<Question> questionOpt = questionRepository.findById(questionId);
         if (!questionOpt.isPresent()) {
-            throw new RuntimeException("Questão não encontrada.");
+            throw new QuestionNotFoundException("Questão não encontrada com o id " + questionId);
         }
-        Question question = questionOpt.get();
 
+        Question question = questionOpt.get();
         Skill skill = question.getSkill();
 
         UserSkill userSkill = userSkillRepository.findByUserAndSkill(user, skill)
@@ -92,11 +94,12 @@ public class SkillAssessmentService {
     }
 
     public UserSkill getUserSkill(User user, Long skillId) {
-        Skill skill = skillRepository.findById(skillId).orElseThrow(() -> new RuntimeException("Skill não encontrada"));
+        Skill skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new SkillNotFoundException("Skill não encontrada com o id " + skillId));
 
         Optional<UserSkill> userSkillOpt = userSkillRepository.findByUserAndSkill(user, skill);
 
-        return userSkillOpt.orElse(null);
+        return userSkillOpt.orElseThrow(() -> new UserSkillNotFoundException("Associação não encontrada."));
     }
 
     public List<Question> getAllQuestions() {
@@ -105,7 +108,7 @@ public class SkillAssessmentService {
 
     public Question getQuestionById(Long questionId) {
         return questionRepository.findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Questão não encontrada com o id: " + questionId));
+                .orElseThrow(() -> new QuestionNotFoundException("Questão não encontrada com o id: " + questionId));
     }
 
     public Question updateQuestion(Question question) {

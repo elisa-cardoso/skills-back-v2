@@ -11,7 +11,6 @@ import java.util.Set;
 @Table(name = "skills")
 @Entity(name = "skills")
 
-// em runtime declara os métodos
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,9 +27,9 @@ public class Skill {
 
     @ManyToMany
     @JoinTable(
-            name = "skill_categoria",
+            name = "skill_category",
             joinColumns = @JoinColumn(name = "skill_id"),
-            inverseJoinColumns = @JoinColumn(name = "categoria_id")
+            inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     @JsonIgnoreProperties("skills")
     private Set<Category> category = new HashSet<>();

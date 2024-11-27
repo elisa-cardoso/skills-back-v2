@@ -36,7 +36,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public CategoryDTO updateCategory (@PathVariable Long id, @RequestBody CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada com o ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada com o id: " + id));
 
         category.setName(categoryDTO.getName());
         Category updatedCategory = categoryRepository.save(category);
@@ -46,7 +46,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada com o ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada com o id: " + id));
 
         categoryRepository.delete(category);
         return ResponseEntity.noContent().build();

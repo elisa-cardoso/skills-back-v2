@@ -11,7 +11,8 @@ import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
     Optional<Skill> findById(Long id);
-    @Query("SELECT s FROM skills s JOIN s.category c WHERE (c.id = :categoryId OR :categoryId IS NULL) AND (s.title LIKE %:title% OR :title IS NULL)")
+    @Query("SELECT s FROM skills s JOIN s.category c WHERE (c.id = :categoryId OR :categoryId IS NULL) " +
+            "AND (LOWER(TRIM(s.title)) LIKE LOWER(CONCAT('%', TRIM(:title), '%')) OR :title IS NULL)")
     Page<Skill> findByCategoryAndTitle(
             @Param("categoryId") Long categoryId,
             @Param("title") String title,
