@@ -37,14 +37,19 @@ public class UserSkill {
     @Column(name = "favorite")
     private Boolean favorite = false;
 
+    @Column(name = "difficulty_rating")
+    private String difficultyRating;
+
     public UserSkill(User user, Skill skill, Integer level, Integer score) {
         this.user = user;
         this.skill = skill;
         this.level = (level == null) ? 1 : level;
         this.score = (score == null) ? 0 : score;
 
+
     }
     public Integer getScore() {
         return score != null ? score : 0;
     }
+
 }

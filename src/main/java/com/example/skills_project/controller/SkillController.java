@@ -65,7 +65,7 @@ public class SkillController {
     }
 
     @PutMapping("/{id}")
-    public SkillResponseDTO updateSkill(@PathVariable Long id, @RequestBody SkillRequestDTO data) {
+    public SkillResponseDTO updateSkill(@PathVariable Long id, @RequestBody @Valid SkillRequestDTO data) {
         Skill skillData = repository.findById(id)
                 .orElseThrow(() -> new SkillNotFoundException("Habilidade não encontrada com o id: " + id));
 
@@ -102,7 +102,7 @@ public class SkillController {
     public ResponseEntity<Map<String, Object>> searchSkills(
             @RequestParam(value = "title", required = false) String title,
             @RequestParam(value = "categoryId", required = false) Long categoryId,
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sortField", defaultValue = "title") String sortField,
             @RequestParam(value = "sortDirection", defaultValue = "ASC") String sortDirection) {
@@ -110,6 +110,8 @@ public class SkillController {
         if (!sortDirection.equalsIgnoreCase("ASC") && !sortDirection.equalsIgnoreCase("DESC")) {
             return ResponseEntity.badRequest().body(null);
         }
+
+        // System.out.println("Categoria recebida: " + categoryId);
 
         Page<Skill> skills = skillService.getSkills(title, categoryId, page, size, sortField, sortDirection);
 

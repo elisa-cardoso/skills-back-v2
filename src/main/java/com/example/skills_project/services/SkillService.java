@@ -17,7 +17,7 @@ public class SkillService {
 
     public Page<Skill> getSkills(String title, Long categoryId, int page, int size, String sortField, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page -1, size, sort);
 
         if (categoryId != null && title != null) {
             return skillRepository.findByCategoryAndTitle(categoryId, title, pageable);

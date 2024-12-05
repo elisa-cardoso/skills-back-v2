@@ -43,7 +43,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/user_skills/favorite").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user_skills/favorite/{skillId}").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/user_skills/favorite/{skillId}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user_skills").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/user_skills").permitAll()
                         .requestMatchers(HttpMethod.GET, "/questions/user_skill/{skillId}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/user_skills").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/questions/{skillId}/question").hasRole("ADMIN")
@@ -55,6 +55,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.GET, "/skills/by-category/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/skills/search").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/user_skills/toggle/{id}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/user_skills/difficulty/{skillId}").permitAll()
 
 
                         .requestMatchers(

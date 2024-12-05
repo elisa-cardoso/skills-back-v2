@@ -7,6 +7,7 @@ import com.example.skills_project.userSkill.UserSkill;
 import com.example.skills_project.userSkill.UserSkillRepository;
 import com.example.skills_project.userSkill.UserSkillResponseDTO;
 import com.example.skills_project.users.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,7 @@ public class SkillAssessmentController {
     @PostMapping("/{skillId}")
     public ResponseEntity<Question> createQuestion(
             @PathVariable Long skillId,
+            @Valid
             @RequestBody QuestionDTO questionDTO) {
 
         Skill skill = new Skill();
@@ -82,6 +84,7 @@ public class SkillAssessmentController {
     @PutMapping("/{questionId}")
     public ResponseEntity<Question> updateQuestion(
             @PathVariable Long questionId,
+            @Valid
             @RequestBody QuestionDTO questionDTO) {
 
         Question existingQuestion = skillAssessmentService.getQuestionById(questionId);
@@ -157,7 +160,8 @@ public class SkillAssessmentController {
                 userSkill.getScore(),
                 userSkill.getSkill().getImage(),
                 userSkill.getSkill().getDescription(),
-                userSkill.getFavorite()
+                userSkill.getFavorite(),
+                userSkill.getDifficultyRating()
 
         );
 

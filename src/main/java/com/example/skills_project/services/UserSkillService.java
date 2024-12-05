@@ -29,7 +29,11 @@ public class UserSkillService {
     @Autowired
     private UserSkillRepository userSkillRepository;
 
-    public UserSkillResponseDTO associateSkillToUser(Long skillId, Integer level) {
+    public List<UserSkill> getUserSkillsByUserOrderedByFavorite(User user) {
+        return userSkillRepository.findUserSkillsByUserOrderedByFavorite(user);
+    }
+
+    public UserSkillResponseDTO associateSkillToUser(Long skillId, Integer level, String difficultyRating) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String login = authentication.getName();
         User user = userRepository.findByLogin(login)
@@ -43,6 +47,11 @@ public class UserSkillService {
         userSkill.setSkill(skill);
         userSkill.setLevel(level);
 
+        if (difficultyRating != null) {
+            userSkill.setDifficultyRating(difficultyRating);
+        }
+
+
         UserSkill savedUserSkill = userSkillRepository.save(userSkill);
 
         return new UserSkillResponseDTO(
@@ -54,9 +63,11 @@ public class UserSkillService {
                 savedUserSkill.getScore(),
                 skill.getImage(),
                 skill.getDescription(),
-                userSkill.getFavorite()
+                userSkill.getFavorite(),
+                userSkill.getDifficultyRating()
         );
     }
+
 
     public List<UserSkillResponseDTO> getUserSkillsByUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -64,7 +75,7 @@ public class UserSkillService {
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
-        List<UserSkill> userSkills = userSkillRepository.findByUser(user);
+        List<UserSkill> userSkills = userSkillRepository.findUserSkillsByUserOrderedByFavorite(user);
 
         return userSkills.stream().map(userSkill -> {
             Skill skill = userSkill.getSkill();
@@ -77,7 +88,8 @@ public class UserSkillService {
                     userSkill.getScore(),
                     skill.getImage(),
                     skill.getDescription(),
-                    userSkill.getFavorite()
+                    userSkill.getFavorite(),
+                    userSkill.getDifficultyRating()
             );
         }).collect(Collectors.toList());
     }
@@ -179,6 +191,35 @@ public class UserSkillService {
             return "Habilidade removida dos favoritos com sucesso!";
         }
         return "Habilidade não encontrada para o usuário.";
+    }
+
+    public String updateDifficultyRating(Long skillId, String difficultyRating) {
+        if (!isValidDifficulty(difficultyRating)) {
+            return "A dificuldade deve ser 'dominado', 'fácil', 'médio' ou 'difícil'.";
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        User user = userRepository.findByLogin(login)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+
+        Skill skill = skillRepository.findById(skillId)
+                .orElseThrow(() -> new SkillNotFoundException("Habilidade não encontrada."));
+
+        Optional<UserSkill> userSkillOptional = userSkillRepository.findByUserAndSkill(user, skill);
+        if (userSkillOptional.isPresent()) {
+            UserSkill userSkill = userSkillOptional.get();
+
+            userSkill.setDifficultyRating(difficultyRating);
+            userSkillRepository.save(userSkill);
+            return "Dificuldade atribuída com sucesso!";
+        } else {
+            return "Associação entre usuário e habilidade não encontrada.";
+        }
+    }
+
+    private boolean isValidDifficulty(String difficultyRating) {
+        return difficultyRating.equals("dominado") || difficultyRating.equals("fácil") ||
+                difficultyRating.equals("médio") || difficultyRating.equals("difícil");
     }
 
 }
